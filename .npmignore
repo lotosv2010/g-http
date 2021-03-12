@@ -1,0 +1,11 @@
+# 忽略目录
+examples/
+public/
+docs/
+tests/
+node_modules/
+src/
+
+ 
+# 忽略指定文件
+.babelrc
