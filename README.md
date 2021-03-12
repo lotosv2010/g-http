@@ -1,8 +1,15 @@
 ## usage
 
+## download
+
+
+```
+npm i -S gw-http
+```
+
 ### package
 ```
-import Http from "g-http";
+import Http from "gw-http";
 
 ```
 

@@ -41,14 +41,12 @@ class Http {
         const { status, data } = res
         if (status === 200) {
           return Promise.resolve(data)
-        } else {
-          // 错误码统一处理
-          const statusText = codeMessage[status] || '服务端异常。'
-          return Promise.reject(statusText)
         }
       },
       err => {
-        return Promise.reject(err)
+        // 错误码统一处理
+        const statusText = codeMessage[err.response.status] || '服务端异常。'
+        return Promise.reject(statusText)
       }
     )
   }
