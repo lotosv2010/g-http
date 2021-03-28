@@ -8,11 +8,11 @@ import md5 from 'md5'
  */
 
 const cacheMap = new LRU({
-  max: 500, maxAge: 1000 * 60 * 60
+  max: 50, maxAge: 1000 * 60 * 60
 })
 const timeout = Symbol('timeout');
 const baseURL = Symbol('baseURL');
-const headers = Symbol('headers');
+const header = Symbol('headers');
 const errorCtl = Symbol('errorCtl');
 const dataCtl = Symbol('dataCtl');
 const mergeOptions = Symbol('mergeOptions');
@@ -26,12 +26,12 @@ class Http {
     const { 
       url = '/',
       headers = {},
-      errorControl = (res) => res,
+      errorControl = (res) => true,
       dataControl = (res) => res
     } = options
     this[timeout] = 5000 // 超时时间
     this[baseURL] = url
-    this[headers] = { 'Content-Type': 'application/json', ...headers }
+    this[header] = { 'Content-Type': 'application/json', ...headers }
     this[errorCtl] = errorControl
     this[dataCtl] = dataControl
   }
@@ -42,7 +42,7 @@ class Http {
       baseURL: this[baseURL],
       ...options,
       headers: {
-        ...this[headers],
+        ...this[header],
         ...options.headers
       }
     }
@@ -73,7 +73,10 @@ class Http {
     // 合并选项
     const opts = this[mergeOptions](options)
     // 创建实例
-    const instance = axios.create()
+    const instance = null
+    if(!instance) {
+      instance = axios.create()
+    }
     // 添加拦截器
     this[setInterceptor](instance)
     // 当调用Axios.request 时，内部会创建一个Axios实例，并且给这个实例传入配置属性
@@ -90,11 +93,23 @@ class Http {
     }
     method === 'get' && this[getCache](key, cache)
     return new Promise((resolve, reject) => {
+      const errFn = this[errorCtl]
       this[request](opts).then((res) => {
         const result = this[dataCtl](res)
-        method === 'get' && this[saveCache](key, cache, result)
-        resolve(result)
-      }).catch(err => reject(this[errorCtl](err)))
+        if(typeof errFn === 'function') {
+          const { success = true, message = 'errorControl return value is wrong' } = errFn(res)
+          method === 'get' && this[saveCache](key, cache, result)
+          success === false ? resolve(result) : reject(message)
+        } else {
+          reject('error: errorControl is not a function!')
+        }
+      }).catch(err => {
+        if(typeof errFn === 'function') {
+          reject(errFn(err))
+        } else {
+          reject('error: errorControl is not a function!')
+        }
+      })
     })
   }
   [saveCache](key, cache, result) {

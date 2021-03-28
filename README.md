@@ -22,7 +22,10 @@ const http = new Http({
   headrs: {},
   errorControl: res => {
     console.error("error", res);
-    return res;
+    return {
+      success: true,
+       message: 'error'
+    }
   },
   dataControl: res => {
     return res;
