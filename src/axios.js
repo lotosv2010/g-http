@@ -1,6 +1,6 @@
 import axios from 'axios'
 import codeMessage from './error'
-import LRU from 'ru-cache'
+import LRU from 'lru-cache'
 import md5 from 'md5'
 /**
  * 封装的目的是封装公共的拦截器，每一个实例也可以有单独的自己的拦截器
