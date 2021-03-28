@@ -21,6 +21,7 @@ const request = Symbol('request');
 const send = Symbol('send');
 const saveCache = Symbol('saveCache');
 const getCache = Symbol('getCache');
+const commonParams = Symbol('commonParams');
 class Http {
   constructor(options = {}) {
     const { 
@@ -73,7 +74,7 @@ class Http {
     // 合并选项
     const opts = this[mergeOptions](options)
     // 创建实例
-    const instance = null
+    let instance = null
     if(!instance) {
       instance = axios.create()
     }
@@ -88,8 +89,8 @@ class Http {
     const opts = {
       url,
       method,
-      data: method === 'post' && data || null,
-      params: method === 'get' && { ...data } || { ...query }
+      data: method === 'post' && { ...data, ...this[commonParams]} || null,
+      params: method === 'get' && { ...data, ...this[commonParams] } || { ...query }
     }
     method === 'get' && this[getCache](key, cache)
     return new Promise((resolve, reject) => {
@@ -120,6 +121,9 @@ class Http {
     const k = md5(key)
     const cacheData = cacheMap.get(k)
     if(cacheData && cache) return Promise.resolve(JSON.parse(cacheData))
+  }
+  setCommonParams(params = {}) {
+    this[commonParams] = params
   }
   get(url, data = {}, options = {}) {
     return this[send](url, 'get', data, options)
