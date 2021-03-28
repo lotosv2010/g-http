@@ -13,8 +13,8 @@ const cacheMap = new LRU({
 const timeout = Symbol('timeout');
 const baseURL = Symbol('baseURL');
 const headers = Symbol('headers');
-const errorControl = Symbol('errorControl');
-const dataControl = Symbol('dataControl');
+const errorCtl = Symbol('errorCtl');
+const dataCtl = Symbol('dataCtl');
 const mergeOptions = Symbol('mergeOptions');
 const setInterceptor = Symbol('setInterceptor');
 const request = Symbol('request');
@@ -32,8 +32,8 @@ class Http {
     this[timeout] = 5000 // 超时时间
     this[baseURL] = url
     this[headers] = { 'Content-Type': 'application/json', ...headers }
-    this[errorControl] = errorControl
-    this[dataControl] = dataControl
+    this[errorCtl] = errorControl
+    this[dataCtl] = dataControl
   }
   // 合并选项
   [mergeOptions](options) {
@@ -91,10 +91,10 @@ class Http {
     method === 'get' && this[getCache](key, cache)
     return new Promise((resolve, reject) => {
       this[request](opts).then((res) => {
-        const result = this[dataControl](res)
+        const result = this[dataCtl](res)
         method === 'get' && this[saveCache](key, cache, result)
         resolve(result)
-      }).catch(err => reject(this[errorControl](err)))
+      }).catch(err => reject(this[errorCtl](err)))
     })
   }
   [saveCache](key, cache, result) {
