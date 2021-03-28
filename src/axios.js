@@ -85,7 +85,7 @@ class Http {
   }
   [send](url, method, data, options) {
     const { cache = false, query = {}, mock = false } = options
-    const key = `${url}${JSON.stringify(data)}`
+    const key = md5(`${url}${JSON.stringify(data)}`)
     const opts = {
       url,
       method,
@@ -114,13 +114,13 @@ class Http {
     })
   }
   [saveCache](key, cache, result) {
-    const k = md5(key)
-    cache && cacheMap.set(k, JSON.stringify(result))
+    cache && cacheMap.set(key, JSON.stringify(result))
   }
   [getCache](key, cache) {
-    const k = md5(key)
-    const cacheData = cacheMap.get(k)
-    if(cacheData && cache) return Promise.resolve(JSON.parse(cacheData))
+    if(cache) {
+      const cacheData = cacheMap.get(key)
+      return cacheData && Promise.resolve(JSON.parse(cacheData))
+    }
   }
   setCommonParams(params = {}) {
     this[commonParams] = params
