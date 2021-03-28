@@ -13,7 +13,7 @@ class Http {
       errorControl = (res) => res,
       dataControl = (res) => res
     } = options
-    this.timeout = 6000 // 超时时间
+    this.timeout = 5000 // 超时时间
     this.baseURL = url
     this.headers = { 'Content-Type': 'application/json', ...headers }
     this.errorControl = errorControl
