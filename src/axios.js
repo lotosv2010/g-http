@@ -36,7 +36,7 @@ class Http {
     this[dataControl] = dataControl
   }
   // 合并选项
-  mergeOptions(options) {
+  [mergeOptions](options) {
     return {
       timeout: this[timeout],
       baseURL: this[baseURL],
@@ -48,7 +48,7 @@ class Http {
     }
   }
   // 添加拦截器
-  setInterceptor(instance) {
+  [setInterceptor](instance) {
     instance.interceptors.request.use(config => {
       return config
     }, err => {
@@ -69,7 +69,7 @@ class Http {
       }
     )
   }
-  request(options) {
+  [request](options) {
     // 合并选项
     const opts = this[mergeOptions](options)
     // 创建实例
@@ -79,7 +79,7 @@ class Http {
     // 当调用Axios.request 时，内部会创建一个Axios实例，并且给这个实例传入配置属性
     return instance(opts)
   }
-  send(url, method, data, options) {
+  [send](url, method, data, options) {
     const { cache = false, query = {}, mock = false } = options
     const key = `${url}${JSON.stringify(data)}`
     const opts = {
@@ -97,11 +97,11 @@ class Http {
       }).catch(err => reject(this[errorControl](err)))
     })
   }
-  saveCache(key, cache, result) {
+  [saveCache](key, cache, result) {
     const k = md5(key)
     cache && cacheMap.set(k, JSON.stringify(result))
   }
-  getCache(key, cache) {
+  [getCache](key, cache) {
     const k = md5(key)
     const cacheData = cacheMap.get(k)
     if(cacheData && cache) return Promise.resolve(JSON.parse(cacheData))
