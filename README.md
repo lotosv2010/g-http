@@ -4,19 +4,20 @@
 
 ## download
 
-
-```
+```bash
 npm i -S gw-http
 ```
 
 ### package
-```
+
+```js
 import Http from "gw-http";
 
 ```
 
 ### Instance
-```
+
+```js
 const http = new Http({
   url: "http://localhost:3000",
   headrs: {},
@@ -35,7 +36,8 @@ const http = new Http({
 ```
 
 ### post
-```
+
+```js
 http.post("/login", {
   name: "test",
   age: 18
@@ -47,7 +49,7 @@ http.post("/login", {
 
 ### get
 
-```
+```js
 http.get("/getUser",{
     name: "test",
     age: 20
