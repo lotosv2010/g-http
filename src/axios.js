@@ -5,6 +5,15 @@ import codeMessage from './error'
  * 封装的目的是封装公共的拦截器，每一个实例也可以有单独的自己的拦截器
  * 创建一个单独的实例，每次请求都是使用这个方法来创建实例
  */
+
+
+const cacheMap = new Map()
+const timeout = Symbol('timeout');
+const baseURL = Symbol('baseURL');
+const headers = Symbol('headers');
+const errorControl = Symbol('errorControl');
+const dataControl = Symbol('dataControl');
+const mergeOptions = Symbol('mergeOptions');
 class Http {
   constructor(options = {}) {
     const { 
@@ -13,7 +22,7 @@ class Http {
       errorControl = (res) => res,
       dataControl = (res) => res
     } = options
-    this.timeout = 5000 // 超时时间
+    this[timeout] = 5000 // 超时时间
     this.baseURL = url
     this.headers = { 'Content-Type': 'application/json', ...headers }
     this.errorControl = errorControl
@@ -24,8 +33,11 @@ class Http {
     return {
       timeout: this.timeout,
       baseURL: this.baseURL,
-      headers: this.headers,
-      ...options
+      ...options,
+      headers: {
+        ...this.headers,
+        ...options.headers
+      }
     }
   }
   // 添加拦截器
@@ -79,10 +91,10 @@ class Http {
     })
   }
   saveCache(key, cache, result) {
-    cache && localStorage.setItem(key, JSON.stringify(result))
+    cache && cacheMap.set(key, JSON.stringify(result))
   }
   getCache(key, cache) {
-    const cacheData = localStorage.getItem(key)
+    const cacheData = cacheMap.get(key)
     if(cacheData && cache) return Promise.resolve(JSON.parse(cacheData))
   }
   get(url, data = {}, options = {}) {
