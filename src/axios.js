@@ -101,7 +101,7 @@ class Http {
         method === 'get' && this[saveCache](key, cache, result)
         error? reject(errorMsg) : resolve(result)
       }).catch(err => {
-        reject(defaultErrorMsg)
+        reject(err)
       })
     })
   }

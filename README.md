@@ -1,5 +1,23 @@
 # gw-http
 
+## development
+
+```bash
+# 开发
+npm run compile
+git add .
+git cz
+
+# 测试
+npm version prerelease 
+npm publish --tag test
+npm i -S gw-http@test 
+
+# 发布
+npm version patch
+npm publish
+```
+
 ## usage
 
 ## download
