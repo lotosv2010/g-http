@@ -24,8 +24,8 @@ const http = new Http({
   errorControl: res => {
     console.error("error", res);
     return {
-      success: true,
-      message: 'error'
+      error: true,
+      errorMsg: 'error'
     }
   },
   dataControl: res => {
