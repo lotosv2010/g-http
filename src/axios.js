@@ -97,6 +97,7 @@ class Http {
       const errFn = this[errorCtl]
       if(typeof errFn !== 'function') return reject('error: errorControl is not a function!')
       this[request](opts).then((res) => {
+        const result = this[dataCtl](res)
         const { error = true, errorMsg = 'error: errorControl return value is wrong' } = errFn(res)
         method === 'get' && this[saveCache](key, cache, result)
         error? reject(errorMsg) : resolve(result)
